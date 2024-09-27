@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.demo2.ArticleMapper">
+    <select id="selectAllInfoNotices" resultType="org.example.demo2.model.ArticleDto">
+        SELECT * FROM info_notice
+    </select>
+
+    <select id="selectInfoNoticeBySn" parameterType="int" resultType="org.example.demo2.model.ArticleDto">
+        select * from info_notice where sn = #{sn}
+    </select>
+
+    <select id="selectInfoNoticeSearch" parameterType="org.example.demo2.model.SearchArticleDto" resultType="org.example.demo2.model.ArticleDto">
+        select * from info_notice
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND CREAT_DT &gt;= STR_TO_DATE(#{startDate}, '%Y%m%d')
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND CREAT_DT  &lt;= STR_TO_DATE(#{endDate}, '%Y%m%d 23:59:59')
+            </if>
+            <if test="title != null and title != ''">
+                AND NOTICE_TITLE LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="content != null and content != ''">
+                AND NOTICE_DETAIL LIKE CONCAT('%', #{content}, '%')
+            </if>
+            <if test="branch != null and branch != ''">
+                AND NOTICE_PSINT = #{branch}
+            </if>
+        </where>
+    </select>
+    <insert id="insertArticle" parameterType="org.example.demo2.model.ArticleDto">
+        insert into info_notice (
+            NOTICE_TITLE, NOTICE_DETAIL, NOTICE_IMG, NOTICE_PSINT, NOTICE_STATE, NOTICE_TYPE
+        ) values (
+          #{noticeTitle},#{noticeDetail},#{noticeImg},#{noticePsint},#{noticeState},#{noticeType}
+                         )
+    </insert>
+
+    <select id="selectTransaction" resultType="org.example.demo2.model.TransactionDto$Detail"
+            parameterType="org.example.demo2.model.TransactionDto">
+        SELECT
+            DATE_FORMAT(d.CONFM_DT, '%Y년 %m월') AS 'date',
+            SUM(CASE WHEN (d.splpc + d.vat) >= 0 THEN 1 ELSE -1 END) AS 'transactionCount',
+            SUM(d.splpc + d.vat) AS 'transactionAmount'
+        FROM article.DELNG d
+                 LEFT JOIN INFO_MBER m ON d.mber_code = m.mber_code
+                 LEFT JOIN INFO_BIZ b ON m.ENTRPS_CODE = b.ENTRPS_CODE
+                 LEFT JOIN INFO_STORE_ID si ON m.entrps_code = si.entrps_code
+                 LEFT JOIN DELNG_CREDT cr ON d.MBER_CODE = cr.MBER_CODE AND d.MBER_CODE_SN = cr.MBER_CODE_SN AND d.RCIPT_NO = cr.RCIPT_NO
+                 LEFT JOIN EXCCLC_SMS sm ON d.MBER_CODE = sm.MBER_CODE AND d.MBER_CODE_SN = sm.MBER_CODE_SN AND d.RCIPT_NO = sm.RCIPT_NO
+        WHERE d.MBER_CODE IN (SELECT im.MBER_CODE
+                              FROM INFO_MBER im
+                              WHERE im.USID = #{usid})
+          AND d.CONFM_DT BETWEEN #{startDt} AND #{endDt}
+        GROUP BY DATE_FORMAT(d.CONFM_DT, '%Y-%m')
+        ORDER BY DATE_FORMAT(d.CONFM_DT, '%Y-%m')
+    </select>
+    <select id="selectUserInfo" parameterType="org.example.demo2.model.TransactionDto" resultType="org.example.demo2.model.TransactionDto">
+        SELECT
+            b.BPRPRR as 'name',
+            b.BPRPRR_IHIDNUM as 'businessNumber'
+        FROM INFO_MBER m
+                 JOIN INFO_BIZ b ON m.ENTRPS_CODE = b.ENTRPS_CODE
+        WHERE m.USID = #{usid};
+    </select>
+
+<!--    <select id="selectSwipeTransaction" resultType="org.example.demo2.model.SwipeTransactionDto" parameterType="java.util.Map">-->
+<!--        SELECT '' AS trmnl_no,-->
+<!--        c.usid,-->
+<!--        c.nm,-->
+<!--        d.entrps_code,-->
+<!--        d.entrps_nm,-->
+<!--        IFNULL(f.entrps_code, '') AS psitn_entrps_code1,-->
+<!--        IFNULL(f.role_code, '') AS psitn_role_code1,-->
+<!--        IFNULL(f.entrps_nm, '') AS psitn_entrps_nm1,-->
+<!--        IFNULL(g.entrps_code, '') AS psitn_entrps_code2,-->
+<!--        IFNULL(g.role_code, '') AS psitn_role_code2,-->
+<!--        IFNULL(g.entrps_nm, '') AS psitn_entrps_nm2,-->
+<!--        IFNULL(h.entrps_code, '') AS psitn_entrps_code3,-->
+<!--        IFNULL(h.role_code, '') AS psitn_role_code3,-->
+<!--        IFNULL(h.entrps_nm, '') AS psitn_entrps_nm3,-->
+<!--        b.mber_code,-->
+<!--        b.mber_code_sn,-->
+<!--        b.rcipt_no,-->
+<!--        b.splpc,-->
+<!--        b.vat,-->
+<!--        b.delng_se_code,-->
+<!--        a.instlmt_month,-->
+<!--        a.issue_cmpny_nm,-->
+<!--        a.card_no,-->
+<!--        b.confm_dt,-->
+<!--        b.confm_time,-->
+<!--        b.confm_no,-->
+<!--        c.telno,-->
+<!--        (SELECT delng_position_at FROM INFO_STORE WHERE entrps_code=c.entrps_code) AS delng_position_at,-->
+<!--        b.setle_device,-->
+<!--        b.setle_mthd_code,-->
+<!--        b.orginl_excclc_cycle,-->
+<!--        (SELECT confm_dt-->
+<!--        FROM DELNG-->
+<!--        WHERE trgt_mber_code=b.mber_code-->
+<!--        AND trgt_mber_code_sn=b.mber_code_sn-->
+<!--        AND trgt_rcipt_no=b.rcipt_no-->
+<!--        AND delng_se_code = 'CARD_CNCL' limit 1) AS cncl_confm_dt,-->
+<!--        (SELECT confm_time-->
+<!--        FROM DELNG-->
+<!--        WHERE trgt_mber_code=b.mber_code-->
+<!--        AND trgt_mber_code_sn=b.mber_code_sn-->
+<!--        AND trgt_rcipt_no=b.rcipt_no-->
+<!--        AND delng_se_code = 'CARD_CNCL' limit 1) AS cncl_confm_time,-->
+<!--        (SELECT IFNULL(lng, '0') FROM DELNG_POSITION WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no) AS lng,-->
+<!--        (SELECT IFNULL(lat, '0') FROM DELNG_POSITION WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no) AS lat,-->
+<!--        d.acnutno,(SELECT fee_tariff FROM INFO_STORE WHERE entrps_code=c.entrps_code) AS fee_tariff,-->
+<!--        (SELECT IFNULL(CONVERT(SIGN_IMG USING utf8), '') FROM DELNG_SIGN WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no) AS sign_img,-->
+<!--        (SELECT IFNULL(SUM(fee),0) FROM EXCCLC_ENTRPS WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no AND role_code='ROLE_STORE' AND (se_code='FEE_PG' OR se_code='FEE_VAN' )) AS store_fee,-->
+<!--        (SELECT IFNULL(SUM(fee),0) FROM EXCCLC_ENTRPS WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no AND role_code='ROLE_STORE' AND se_code='FEE_SVC') AS store_svc,-->
+<!--        (SELECT IFNULL(SUM(fee),0) FROM EXCCLC_ENTRPS WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no AND (role_code='ROLE_HEDOFC' OR (role_code='ROLE_STORE' AND se_code='FEE_VAN'))) AS hedofc,-->
+<!--        (SELECT IFNULL(SUM(fee),0) FROM EXCCLC_ENTRPS WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no AND role_code='ROLE_BRFFC') AS brffc,-->
+<!--        (SELECT IFNULL(SUM(fee),0) FROM EXCCLC_ENTRPS WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no AND role_code='ROLE_AGENCY') AS agency,-->
+<!--        (SELECT IFNULL(SUM(fee),0) FROM EXCCLC_ENTRPS WHERE mber_code=a.mber_code AND mber_code_sn=a.mber_code_sn AND rcipt_no=a.rcipt_no AND role_code='ROLE_DEALER') AS dealer-->
+<!--        FROM DELNG AS b-->
+<!--        LEFT JOIN DELNG_CREDT AS a ON a.mber_code=b.mber_code AND a.mber_code_sn=b.mber_code_sn AND a.rcipt_no=b.rcipt_no-->
+<!--        INNER JOIN INFO_MBER AS c ON b.mber_code=c.mber_code-->
+<!--        INNER JOIN INFO_ENTRPS AS d ON c.entrps_code=d.entrps_code-->
+<!--        LEFT JOIN INFO_ENTRPS AS f ON f.entrps_code=(SELECT entrps_code FROM INFO_ENTRPS WHERE entrps_code=d.psitn_entrps_code)-->
+<!--        LEFT JOIN INFO_ENTRPS AS g ON g.entrps_code=(SELECT entrps_code FROM INFO_ENTRPS WHERE entrps_code=f.psitn_entrps_code)-->
+<!--        LEFT JOIN INFO_ENTRPS AS h ON h.entrps_code=(SELECT entrps_code FROM INFO_ENTRPS WHERE entrps_code=g.psitn_entrps_code)-->
+<!--        LEFT JOIN INFO_STORE_ID isi ON isi.entrps_code = c.entrps_code-->
+<!--        WHERE 1=1-->
+<!--        AND b.confm_dt >= #{startDt}-->
+<!--        AND b.confm_dt <= #{endDt}-->
+<!--        AND b.delng_se_code='CARD_ISSUE'-->
+<!--    </select>-->
+
+</mapper>

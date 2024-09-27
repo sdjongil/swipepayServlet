@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.demo2.storeTransactionsMapper">
+    <insert id="insertStoreTransaction" parameterType="org.example.demo2.model.StoreTransactionsDTO">
+        INSERT INTO data (
+            구분, 지사, 대리점, 딜러, 승인번호, 거래번호, 방식, 판매자, 판매자연락처,
+            상호, 구매자연락처, 판매금액, 상점계정코드, 할부, 발급사명, 카드번호,
+            승인일시, 취소일시, 순간송금액, 상점정산액, 본사수익, 지사수익, 대리점수익,
+            딜러수익, KSNETID, 상점단말기번호, 판매상품, 결제단말, 단말타입
+        ) VALUES (
+                     #{구분}, #{지사}, #{대리점}, #{딜러}, #{승인번호}, #{거래번호}, #{방식}, #{판매자}, #{판매자연락처},
+                     #{상호}, #{구매자연락처}, #{판매금액}, #{상점계정코드}, #{할부}, #{발급사명}, #{카드번호},
+                     #{승인일시}, #{취소일시}, #{순간송금액}, #{상점정산액}, #{본사수익}, #{지사수익}, #{대리점수익},
+                     #{딜러수익}, #{KSNETID}, #{상점단말기번호}, #{판매상품}, #{결제단말}, #{단말타입}
+                 )
+    </insert>
+    <select id="getAllStoreTransactions" resultType="org.example.demo2.model.StoreTransactionsDTO">
+        SELECT * FROM data
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="countAllStoreTransactions" resultType="int">
+        SELECT COUNT(*) FROM data
+    </select>
+</mapper>

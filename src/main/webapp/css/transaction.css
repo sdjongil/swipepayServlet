@@ -1,0 +1,59 @@
+body, html {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* 모든 요소에 적용 */
+}
+
+.container {
+    width: 90%; /* 최대 폭을 유지하여 PDF에 잘 맞도록 설정 */
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.details table, .summary table {
+    width: 100%; /* 테이블의 전체 너비 사용 */
+    border-collapse: collapse;
+    margin: 10px 0; /* 여백을 조정하여 PDF에 맞추기 */
+}
+.summary table tfoot tr td{
+    background-color: #cfe1e9;
+    font-weight: bold;
+}
+
+.details table th, .details table td, .summary table th, .summary table td {
+    border: 2px solid #ffffff; /* 테두리 크기와 색상 조정 */
+    padding: 8px; /* 여백 조정 */
+    text-align: center;
+}
+.details th:nth-child(1), .details td:nth-child(1),.summary th:nth-child(1), .summary td:nth-child(1) {
+    width: 25%; /* 첫 번째 열의 너비를 25%로 설정 */
+}
+
+.details th:nth-child(2), .details td:nth-child(2), .summary th:nth-child(2), .summary td:nth-child(2) {
+    width: 25%; /* 두 번째 열의 너비를 25%로 설정 */
+}
+
+.details th:nth-child(3), .details td:nth-child(3),.summary th:nth-child(3), .summary td:nth-child(3){
+    width: 25%; /* 세 번째 열의 너비를 25%로 설정 */
+}
+
+.details th:nth-child(4), .details td:nth-child(4),.summary th:nth-child(4), .summary td:nth-child(4){
+    width: 25%; /* 네 번째 열의 너비를 25%로 설정 */
+}
+
+.details table th, .summary table th {
+    background-color: rgb(75, 171, 197);
+}
+.details table tr td, .summary table tr td {
+    background-color: rgb(231, 239, 243);
+}
+
+.details table td, .summary table td {
+    background-color: rgb(255, 255, 255);
+}
+header table tr th{
+    white-space: pre;
+}

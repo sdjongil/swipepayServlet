@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.demo2.TestMapper">
+    <select id="selectTestChunk" parameterType="org.example.demo2.model.SearchTestDto"
+            resultType="org.example.demo2.model.TestDto">
+        SELECT
+            CASE d.ORGINL_EXCCLC_CYCLE
+                WHEN 0 THEN '순간송금'
+                WHEN 1 THEN 'D+1'
+                WHEN 2 THEN 'D+2'
+                ELSE '나머지'
+                END AS '정산주기',
+                CONCAT(m.NM, '(', m.usid, ')') AS '판매자',
+                b.BIZ_TELNO AS '전화번호',
+                m.NM AS '이름',
+                sm.PURCHSR_MBTLNUM AS '구매자연락처',
+                (d.splpc + d.vat) AS '판매금액',
+                si.store_id AS '상점아이디',
+                cr.INSTLMT_MONTH AS '할부개월',
+                cr.ISSUE_CMPNY_NM AS '카드정보',
+                cr.CARD_NO AS '카드번호',
+                DATE_FORMAT(d.CONFM_DT, '%Y-%m-%d') AS '판매날짜',
+                CASE d.delng_se_code
+                    WHEN 'CARD_CNCL' THEN '취소'
+                    WHEN 'CARD_ISSUE' THEN ''
+                    ELSE '나머지'
+                    END AS '취소건'
+        FROM article.DELNG d
+                 LEFT JOIN article.INFO_MBER m ON d.MBER_CODE = m.MBER_CODE
+                 LEFT JOIN article.INFO_BIZ b ON m.ENTRPS_CODE = b.ENTRPS_CODE
+                 LEFT JOIN article.INFO_STORE_ID si ON m.ENTRPS_CODE = si.ENTRPS_CODE
+                 LEFT JOIN article.DELNG_CREDT cr ON d.MBER_CODE = cr.MBER_CODE
+            AND d.MBER_CODE_SN = cr.MBER_CODE_SN
+            AND d.RCIPT_NO = cr.RCIPT_NO
+                 LEFT JOIN article.EXCCLC_SMS sm ON d.MBER_CODE = sm.MBER_CODE
+            AND d.MBER_CODE_SN = sm.MBER_CODE_SN
+            AND d.RCIPT_NO = sm.RCIPT_NO
+        WHERE d.CONFM_DT BETWEEN #{startDT} AND #{endDT}
+            LIMIT #{limit} OFFSET #{offSet}
+    </select>
+    <select id="selectCount" parameterType="org.example.demo2.model.StoreTransactionsDTO" resultType="Integer">
+        SELECT
+            count(*)
+        FROM article.DELNG d
+                 LEFT JOIN article.INFO_MBER m ON d.MBER_CODE = m.MBER_CODE
+                 LEFT JOIN article.INFO_BIZ b ON m.ENTRPS_CODE = b.ENTRPS_CODE
+                 LEFT JOIN article.INFO_STORE_ID si ON m.ENTRPS_CODE = si.ENTRPS_CODE
+                 LEFT JOIN article.DELNG_CREDT cr ON d.MBER_CODE = cr.MBER_CODE
+            AND d.MBER_CODE_SN = cr.MBER_CODE_SN
+            AND d.RCIPT_NO = cr.RCIPT_NO
+                 LEFT JOIN article.EXCCLC_SMS sm ON d.MBER_CODE = sm.MBER_CODE
+            AND d.MBER_CODE_SN = sm.MBER_CODE_SN
+            AND d.RCIPT_NO = sm.RCIPT_NO
+        WHERE d.CONFM_DT BETWEEN #{startDT} AND #{endDT};
+    </select>
+</mapper>

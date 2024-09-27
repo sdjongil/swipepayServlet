@@ -1,0 +1,206 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.actions {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.actions button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.actions button:hover {
+    background-color: #0056b3;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.filters .spacer {
+    flex: 1;
+}
+
+.filters input,
+.filters select {
+    margin: 0 5px;
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+.filters label {
+    margin-right: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f1f1f1;
+}
+
+button {
+    padding: 5px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+/* The Modal (background) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 700px; /* 가로 길이 500px로 설정 */
+}
+#registrationForm{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#registrationForm > div {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px;
+}
+#registrationForm > div > label:first-child{
+    font-size: 13px;
+    width: 10%;
+    display: flex;
+    justify-content: center;
+}
+#articleTitle, #articleContents{
+    width: 80%;
+    margin-left: 20px;
+    height: 25px;
+}
+#articleContents{
+    margin-left: 20px;
+    width: 80%;
+    height: 300px;
+}
+#saveAndCancelButtons{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+#saveAndCancelButtons > button{
+    margin-left: 5px;
+    width: 70px;
+    height: 30px;
+}
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.custom-radio-group {
+    display: flex;
+    flex-direction: row; /* 정렬을 가로로 변경 */
+}
+
+.custom-radio-btn {
+    display: flex;
+    align-items: center;
+    margin: 5px 5px 5px 0; /* 가로 정렬을 위해 오른쪽 마진 추가 */
+    cursor: pointer;
+}
+
+.custom-radio-btn input[type="radio"] {
+    display: none;
+}
+
+.custom-radio-box {
+    padding: 5px 20px;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: #007bff; /* 선택 전 연한색 */
+    color: #fff; /* 선택 전 흰색 글씨 */
+    display: inline-flex; /* Flexbox를 사용하여 내부 정렬 */
+    justify-content: center; /* 가로 가운데 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
+    font-size: 12px;
+    width: 25px;
+    height: 18px;
+    border-radius: 5px;
+}
+
+
+.custom-radio-btn input[type="radio"]:checked + .custom-radio-box {
+    background-color: #002684; /* 선택 후 진한색 */
+    color: #fff; /* 선택 후 흰색 글씨 */
+}
+.custom-radio-btn input[type="postRank"]:checked + .custom-radio-box {
+    background-color: #002684; /* 선택 후 진한색 */
+    color: #fff; /* 선택 후 흰색 글씨 */
+}
